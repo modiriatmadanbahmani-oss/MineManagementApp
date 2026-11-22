@@ -22,17 +22,27 @@ jobs:
       - name: Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: Gradle
+      - name: Extract project ZIP
+        run: |
+          unzip -q MineManagement_Editable_Fix48.zip -d extracted
+          find extracted -name gradlew -o -name build.gradle -o -name build.gradle.kts
+
+      - name: Install Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
 
       - name: Build APK
-        run: gradle assembleDebug
-        working-directory: workfix47
+        run: |
+          PROJECT_DIR=$(find extracted -name settings.gradle -o -name settings.gradle.kts | head -1 | xargs dirname)
+          if [ -z "$PROJECT_DIR" ]; then
+            PROJECT_DIR=$(find extracted -name build.gradle -o -name build.gradle.kts | head -1 | xargs dirname)
+          fi
+          echo "Project directory: $PROJECT_DIR"
+          gradle -p "$PROJECT_DIR" assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: MineManagement-debug-apk
-          path: workfix47/app/build/outputs/apk/debug/*.apk
+          path: extracted/**/build/outputs/apk/debug/*.apk

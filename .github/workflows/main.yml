@@ -22,9 +22,9 @@ jobs:
       - name: Android SDK
         uses: android-actions/setup-android@v4
 
-      - name: Extract project ZIP
+      - name: Extract project
         run: |
-          unzip -q MineManagement_Editable_Fix48.zip -d extracted
+          unzip -q MineManagement_Editable_Fix50.zip -d extracted
           find extracted -name gradlew -o -name build.gradle -o -name build.gradle.kts
 
       - name: Install Gradle
